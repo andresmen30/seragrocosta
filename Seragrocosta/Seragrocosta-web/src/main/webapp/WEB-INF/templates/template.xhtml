@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="admin.xhtml">
+
+    <ui:define name="head">
+        <h:outputStylesheet library="webjars" name="font-awesome/5.15.1/css/all.min-jsf.css" />
+        <h:outputStylesheet library="webjars" name="font-awesome/5.15.1/css/v4-shims.min-jsf.css" />
+        <h:outputStylesheet library="css" name="prism.css"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="16x16"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="16x16"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="32x32"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="64x64"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="128x128"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="256x256"/>
+        <meta name="theme-color" content="#444"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
+        <f:loadBundle var="theme" basename="admin-theme"/>
+        <title>#{general['name']}</title>
+    </ui:define>
+
+    <ui:define name="logo-lg">
+        #{general['name']}
+    </ui:define>
+
+    <ui:define name="logo-mini">
+        #{general['name.abrev']}
+    </ui:define>
+
+    <ui:define name="menu">
+        <ui:include src="/WEB-INF/includes/menu.xhtml"/>
+    </ui:define>
+
+    <ui:define name="top-menu">
+        <ui:include src="/WEB-INF/includes/top-menu.xhtml"/>
+    </ui:define>
+
+    <ui:define name="content-end">
+        <section class="content">
+            <ui:insert name="code"/>
+        </section>
+        <ui:include src="/WEB-INF/includes/stack.xhtml"/>
+    </ui:define>
+
+    <ui:define name="footer">
+        <div style="display: inline">
+            Powered by
+        </div>
+    </ui:define>
+
+    <ui:define name="after-wrapper">
+        <h:outputScript library="js" name="prism.js" target="head"/>
+        <h:outputScript library="js" name="filter.js"  target="head"/>
+    </ui:define>
+
+</ui:composition>

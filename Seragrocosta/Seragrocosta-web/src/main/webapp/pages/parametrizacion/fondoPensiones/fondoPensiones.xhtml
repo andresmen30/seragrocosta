@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <ui:define name="metadata">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+
+    <ui:define name="title">
+        <div class="pull-left hidden-xs">
+            <h3>#{menu['label.menu.fondo.pensiones']}</h3>
+        </div>
+    </ui:define>
+
+
+    <ui:define name="body">
+        <h:form id="formDatatable">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div style="text-align: right;">
+                        <p:commandButton class="btn btn-success btn-block"
+                                         update=":formFondoPension, headerDialog"
+                                         oncomplete="PF('fondoPensionDialog').show()"
+                                         icon="fa fa-plus-square-o" title="Crear un registro"/>
+                    </div>    
+                </div>
+                <div class="box-body">
+                    <p:dataTable value="#{fondoPensionMb.listaFondoPension}"
+                                 id="dataClasificacion"
+                                 paginator="true"
+                                 widgetVar="dataFondoPensionWidg"
+                                 rowKey="#{fondoPension.idFondoPension}"
+                                 lazy="true"
+                                 filterDelay="800"
+                                 rows="5"
+                                 styleClass="header-right no-border"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                 rowsPerPageTemplate="5,10"
+                                 var="fondoPension" 
+                                 emptyMessage="No se han encontrado registros">
+                        <p:column headerText="Nit" filterBy="#{fondoPension.nit}"
+                                  sortBy="#{fondoPension.nit}">
+                            <h:outputText value="#{fondoPension.nit}"/>
+                        </p:column>
+                        <p:column headerText="Nombre" filterBy="#{fondoPension.nombre}"
+                                  sortBy="#{fondoPension.nombre}">
+                            <h:outputText value="#{fondoPension.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Fecha creación" sortBy="#{fondoPension.fechaCreacion}">
+                            <h:outputText value="#{fondoPension.fechaCreacion}">
+                                <f:convertDateTime type="localDate" pattern="#{menu['label.format.date']}"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Acciones">
+                            <p:commandButton styleClass="btn btn-warning"
+                                             update=":formFondoPension, headerDialog"
+                                             oncomplete="PF('fondoPensionDialog').show()"
+                                             title="Editar registro" icon="fa fa-edit">
+                                <f:setPropertyActionListener target="#{fondoPensionMb.fondoPensionDto}" 
+                                                             value="#{fondoPension}"/>
+                            </p:commandButton>
+                            <p:commandButton styleClass="btn btn-danger" update="formDatatable" action="#{fondoPensionMb.delete(fondoPension)}" 
+                                             title="Eliminar registro" icon="fa fa-trash">
+                                <p:confirm header="Confirmación" message="Estas seguro de eliminar el registro?" icon="ui-icon-alert"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </h:form>
+
+        <p:dialog widgetVar="fondoPensionDialog"  
+                  modal="true"
+                  appendTo="@(body)"
+                  position="center"
+                  resizable="false"
+                  responsive="true"
+                  draggable="true"
+                  showEffect="fade" hideEffect="fade" styleClass="box-primary box-solid card">
+            <f:facet name="header">
+                <h:outputText id="headerDialog" value="#{fondoPensionMb.fondoPensionDto.idFondoPension ne null ? 'Editar' : 'Crear'} fondo de pensiones"/>
+            </f:facet>
+            <h:form id="formFondoPension">
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-6">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Nit*" />
+                                <p:inputText id="inputNit"
+                                             autocomplete="off"
+                                             requiredMessage="Nit es obligatorio" 
+                                             required="true" value="#{fondoPensionMb.fondoPensionDto.nit}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Nombre*" />
+                                <p:inputText id="inputNombre"
+                                             autocomplete="off"
+                                             requiredMessage="Nombre es obligatorio" 
+                                             required="true" value="#{fondoPensionMb.fondoPensionDto.nombre}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-12">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Descripción" />
+                                <p:inputTextarea rows="3"
+                                                 value="#{fondoPensionMb.fondoPensionDto.descripcion}"
+                                                 cols="10" 
+                                                 counter="display"
+                                                 maxlength="250" counterTemplate="{0} Caracteres restantes." 
+                                                 autoResize="true" />
+                                <br />
+                                <h:outputText id="display" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p:spacer width="10"/>
+                <div class="col-md-12 bg-light text-right">
+                    <p:commandButton class="btn btn-secondary"
+                                     immediate="true"
+                                     action="#{fondoPensionMb.init()}"
+                                     oncomplete="PF('fondoPensionDialog').hide()"
+                                     icon="fas fa-arrow-alt-circle-left" 
+                                     value="Cancelar"/>
+                    <p:commandButton class="btn btn-primary" 
+                                     icon="fa fa-save"
+                                     action="#{fondoPensionMb.save()}"
+                                     oncomplete="if(args.validationFailed) { hideBar()}" 
+                                     update="formFondoPension,formDatatable"
+                                     value="Guardar"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        <h:form>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-solid box-danger">
+                <p:commandButton value="Si" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
+                                 icon="far fa-check-circle"/>
+                <p:commandButton value="No" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
+                                 icon="fas fa-times-circle"/>
+            </p:confirmDialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

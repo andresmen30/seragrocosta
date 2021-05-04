@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>#{general['name']}</title>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="16x16"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="16x16"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="32x32"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="64x64"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="128x128"/>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['img/contabilidad.svg']}" sizes="256x256"/>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
+        <h:outputStylesheet library="css" name="prism.css"/>
+        <h:outputStylesheet library="css" name="login.css"/>
+    </h:head>
+
+    <p:dialog id="adminStatusDialog" modal="true" widgetVar="statusDialog" draggable="false" closable="false"
+              resizable="false" responsive="true" showHeader="false" appendTo="@(body)">
+        <p:graphicImage library="img" name="#{adminConfig.loadingImage}"/>
+    </p:dialog>
+
+
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+            <!-- Tabs Titles -->
+
+            <!-- Icon -->
+            <div class="fadeIn first">
+                <p:graphicImage library="img" name="contabilidad.svg" id="icon"/>
+                <h1>Seragrocosta S.A.S</h1>
+            </div>
+
+            <!-- Login Form -->
+            <h:form id="formLogin">
+                <p:growl id="growl" sticky="true"/>
+                <p:inputText value="#{loginMb.loginDto.email}"
+                             autocomplete="off"
+                             required="true"
+                             requiredMessage="Correo es requerido"
+                             class="fadeIn second"
+                             id="login"
+                             placeholder="Correo electrónico">
+                </p:inputText>
+                <p:password value="#{loginMb.loginDto.password}"
+                            class="fadeIn third"
+                            id="password"
+                            required="true"
+                            requiredMessage="Contraseña es requerido"
+                            autocomplete="off"
+                            placeholder="Contraseña"/>
+                <br/><br/>
+                <p:commandButton value="Iniciar sesión" update=":formLogin:growl"
+                                 action="#{loginMb.logIn()}"
+                                 icon="fa fa-check"
+                                 oncomplete="if(args.validationFailed) { hideBar()}"
+                                 class="btn btn-primary btn-lg fadeIn third"/>
+            </h:form>
+            <br/><br/>
+            <!-- Remind Passowrd -->
+            <div id="formFooter">
+                <a class="underlineHover">¿Olvidaste tu contraseña?</a>
+            </div>
+
+        </div>
+    </div>
+
+
+    <h:outputScript library="js" name="prism.js"  target="head"/>
+    <h:outputScript library="js" name="admintemplate.js"  target="head"/>
+</html>

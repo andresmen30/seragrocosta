@@ -1,0 +1,143 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <ui:define name="metadata">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+
+    <ui:define name="title">
+        <div class="pull-left hidden-xs">
+            <h3>#{menu['label.menu.banco']}</h3>
+        </div>
+    </ui:define>
+
+
+    <ui:define name="body">
+        <h:form id="formDatatable">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div style="text-align: right;">
+                        <p:commandButton class="btn btn-success btn-block"
+                                         update=":formBanco, headerDialog"
+                                         oncomplete="PF('bancoDialog').show()"
+                                         icon="fa fa-plus-square-o" title="Crear un registro"/>
+                    </div>    
+                </div>
+                <div class="box-body">
+                    <p:dataTable value="#{bancoMb.listaBanco}"
+                                 id="dataClasificacion"
+                                 paginator="true"
+                                 widgetVar="dataBancoWidg"
+                                 rowKey="#{banco.idBanco}"
+                                 lazy="true"
+                                 filterDelay="800"
+                                 rows="5"
+                                 styleClass="header-right no-border"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                 rowsPerPageTemplate="5,10"
+                                 var="banco" 
+                                 emptyMessage="No se han encontrado registros">
+                        <p:column headerText="Código" filterBy="#{banco.codigo}"
+                                  sortBy="#{banco.codigo}">
+                            <h:outputText value="#{banco.codigo}"/>
+                        </p:column>
+                        <p:column headerText="Nombre" filterBy="#{banco.nombre}"
+                                  sortBy="#{banco.nombre}">
+                            <h:outputText value="#{banco.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Fecha creación" sortBy="#{banco.fechaCreacion}">
+                            <h:outputText value="#{banco.fechaCreacion}">
+                                <f:convertDateTime type="localDate" pattern="#{menu['label.format.date']}"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Acciones">
+                            <p:commandButton styleClass="btn btn-warning"
+                                             update=":formBanco, headerDialog"
+                                             oncomplete="PF('bancoDialog').show()"
+                                             title="Editar registro" icon="fa fa-edit">
+                                <f:setPropertyActionListener target="#{bancoMb.bancoDto}" 
+                                                             value="#{banco}"/>
+                            </p:commandButton>
+                            <p:commandButton styleClass="btn btn-danger" update="formDatatable" action="#{bancoMb.delete(banco)}" 
+                                             title="Eliminar registro" icon="fa fa-trash">
+                                <p:confirm header="Confirmación" message="Estas seguro de eliminar el registro?" icon="ui-icon-alert"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </h:form>
+
+        <p:dialog widgetVar="bancoDialog"
+                  modal="true"
+                  appendTo="@(body)"
+                  position="center"
+                  resizable="false"
+                  responsive="true"
+                  draggable="true"
+                  showEffect="fade" hideEffect="fade" styleClass="box-primary box-solid card">
+            <f:facet name="header">
+                <h:outputText id="headerDialog" value="#{bancoMb.bancoDto.idBanco ne null ? 'Editar' : 'Crear'} Banco"/>
+            </f:facet>
+            <h:form id="formBanco">
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-6">
+                            <div class="p-field">
+                                <p:outputLabel for="inputCodigo" value="Código*" />
+                                <div class="ui-inputgroup">
+                                    <span class="ui-inputgroup-addon">#</span>
+                                    <p:inputText id="inputCodigo"
+                                                 autocomplete="off"
+                                                 required="true"
+                                                 requiredMessage="Código es obligatorio"
+                                                 value="#{bancoMb.bancoDto.codigo}">
+                                        <p:keyFilter regEx="/^\d+$/"/>
+                                    </p:inputText>  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-6">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Nombre*" />
+                                <p:inputText id="inputNombre"
+                                             autocomplete="off"
+                                             requiredMessage="Nombre es obligatorio" 
+                                             required="true" value="#{bancoMb.bancoDto.nombre}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p:spacer width="10"/>
+                <div class="col-md-12 bg-light text-right">
+                    <p:commandButton class="btn btn-secondary"
+                                     immediate="true"
+                                     action="#{bancoMb.init()}"
+                                     oncomplete="PF('bancoDialog').hide()"
+                                     icon="fas fa-arrow-alt-circle-left" 
+                                     value="Cancelar"/>
+                    <p:commandButton class="btn btn-primary" 
+                                     icon="fa fa-save"
+                                     action="#{bancoMb.save()}"
+                                     oncomplete="if(args.validationFailed) { hideBar()}" 
+                                     update="formBanco,formDatatable"
+                                     value="Guardar"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        <h:form>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-solid box-danger">
+                <p:commandButton value="Si" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
+                                 icon="far fa-check-circle"/>
+                <p:commandButton value="No" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
+                                 icon="fas fa-times-circle"/>
+            </p:confirmDialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

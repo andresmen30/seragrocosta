@@ -1,0 +1,88 @@
+<pretty-config xmlns="http://ocpsoft.org/prettyfaces/3.3.3"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://ocpsoft.org/prettyfaces/3.3.3
+      http://ocpsoft.org/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.3.3.xsd">
+
+    <url-mapping id="login">
+        <pattern value="/login" />
+        <view-id value="/login.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="home">
+        <pattern value="/home" />
+        <view-id value="/pages/index.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="periodos">
+        <pattern value="/periodos" />
+        <view-id value="/pages/nomina/periodos/periodos.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="conceptoNomina">
+        <pattern value="/conceptoNomina" />
+        <view-id value="/pages/nomina/concepto/nominaConcepto.xhtml" />
+    </url-mapping>
+    
+     <url-mapping id="liquidacion">
+        <pattern value="/liquidacion" />
+        <view-id value="/pages/nomina/liquidacion/liquidacion.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="eps">
+        <pattern value="/eps" />
+        <view-id value="/pages/parametrizacion/eps/eps.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="fondoPensiones">
+        <pattern value="/fondoPensiones" />
+        <view-id value="/pages/parametrizacion/fondoPensiones/fondoPensiones.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="cajaCompensacion">
+        <pattern value="/cajaCompensacion" />
+        <view-id value="/pages/parametrizacion/cajaCompensacion/cajaCompensacion.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="arl">
+        <pattern value="/arl" />
+        <view-id value="/pages/parametrizacion/arl/arl.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="cargo">
+        <pattern value="/cargo" />
+        <view-id value="/pages/parametrizacion/cargo/cargo.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="empleados">
+        <pattern value="/empleados" />
+        <view-id value="/pages/nomina/empleados/empleados.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="area">
+        <pattern value="/area" />
+        <view-id value="/pages/parametrizacion/area/area.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="banco">
+        <pattern value="/banco" />
+        <view-id value="/pages/parametrizacion/banco/banco.xhtml" />
+    </url-mapping>
+    
+    <url-mapping id="cesantias">
+        <pattern value="/cesantias" />
+        <view-id value="/pages/parametrizacion/cesantias/cesantias.xhtml" />
+    </url-mapping>
+    
+    
+     <url-mapping id="parametrosNomina">
+        <pattern value="/parametrosNomina" />
+        <view-id value="/pages/nomina/parametrosNomina/parametrosNomina.xhtml" />
+    </url-mapping>
+    
+    
+    
+    <url-mapping id="expired">
+        <pattern value="/expired" />
+        <view-id value="/expired.xhtml" />
+    </url-mapping>
+</pretty-config>

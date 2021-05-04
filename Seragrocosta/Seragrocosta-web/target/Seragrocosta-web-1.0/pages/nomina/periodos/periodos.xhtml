@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <ui:define name="metadata">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+
+    <ui:define name="title">
+        <div class="pull-left hidden-xs">
+            <h3>#{menu['label.menu.periodos']}</h3>
+        </div>
+    </ui:define>
+
+
+    <ui:define name="body">
+        <h:form id="formDatatable">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div style="text-align: right;">
+                        <p:commandButton class="btn btn-success btn-block"
+                                         update=":formPeriodo, headerDialog"
+                                         oncomplete="PF('periodoDialog').show()"
+                                         icon="fa fa-plus-square-o" title="Crear un registro">
+                        </p:commandButton>
+                    </div>    
+                </div>
+                <div class="box-body">
+                    <div class="ui-g-12">
+                        <div class="ui-fluid">
+                            <p:schedule id="schedule" locale="es" draggable="false"
+                                        tooltip="true" aspectRatio="2.20"
+                                        rightHeaderTemplate="dayGridMonth"
+                                        value="#{periodosMb.lazyEventModel}" widgetVar="periodCalendar">
+                                <p:ajax event="eventSelect" listener="#{periodosMb.onEventSelect}" update=":formPeriodo, headerDialog"
+                                        oncomplete="PF('periodoDialog').show();" />
+                            </p:schedule>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <p:dialog widgetVar="periodoDialog"  
+                  modal="true"
+                  appendTo="@(body)"
+                  position="center"
+                  resizable="false"
+                  width="500"
+                  responsive="true"
+                  draggable="true"
+                  showEffect="fade" hideEffect="fade" styleClass="box-primary box-solid card">
+            <f:facet name="header">
+                <h:outputText id="headerDialog" value="#{periodosMb.periodosDto.idPeriodo ne null ? 'Editar' : 'Crear'} periodo"/>
+            </f:facet>
+            <h:form id="formPeriodo">
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-12">
+                            <p:outputLabel for="@next" value="Nombre*" />
+                            <p:inputText id="inputNombre"
+                                         autocomplete="off"
+                                         requiredMessage="Nombre es obligatorio" 
+                                         required="true" value="#{periodosMb.periodosDto.nombre}"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-6">
+                            <p:outputLabel for="@next" value="Fecha inicial*" />
+                            <p:calendar id="inputFechaInicial"
+                                        autocomplete="off"
+                                        mask="true"
+                                        showOn="button"
+                                        locale="es"
+                                        pattern="#{menu['label.format.date']}"
+                                        requiredMessage="Fecha inicial es obligatorio" 
+                                        required="true" value="#{periodosMb.periodosDto.fechaInicial}"/>
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="@next" value="Fecha inicial*" />
+                            <p:calendar id="inputFinal"
+                                        autocomplete="off"
+                                        locale="es"
+                                        required="true"
+                                        mask="true"
+                                        showOn="button"
+                                        pattern="#{menu['label.format.date']}" 
+                                        requiredMessage="Fecha final es obligatorio" 
+                                        value="#{periodosMb.periodosDto.fechaFinal}"/>
+                        </div>
+                    </div>
+                    <div class="ui-g-12">
+                        <div class="ui-fluid">
+                            <div class="ui-g-12">
+                                <p:selectManyCheckbox id="conceptosSelect"
+                                                      layout="grid" columns="3"
+                                                      value="#{periodosMb.conceptosSalariales}">
+                                    <f:selectItems value="#{conceptosSalariales}" 
+                                                   var="concepto" 
+                                                   itemValue="#{concepto.nombre}"
+                                                   itemLabel="#{concepto.nombre}"/>
+                                </p:selectManyCheckbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p:spacer width="10"/>
+                <div class="col-md-12 bg-light text-right">
+                    <p:commandButton class="btn btn-secondary"
+                                     immediate="true"
+                                     action="#{periodosMb.inicializate()}"
+                                     oncomplete="PF('periodoDialog').hide()"
+                                     icon="fas fa-arrow-alt-circle-left" 
+                                     value="Cancelar"/>
+                    <p:commandButton class="btn btn-primary" 
+                                     icon="fa fa-save"
+                                     action="#{periodosMb.guardar()}"
+                                     oncomplete="if(args.validationFailed) { hideBar()}" 
+                                     update="formPeriodo"
+                                     value="Guardar"/>
+                    
+                </div>
+            </h:form>
+        </p:dialog>
+        <h:form>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-solid box-danger">
+                <p:commandButton value="Si" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
+                                 icon="far fa-check-circle"/>
+                <p:commandButton value="No" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
+                                 icon="fas fa-times-circle"/>
+            </p:confirmDialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

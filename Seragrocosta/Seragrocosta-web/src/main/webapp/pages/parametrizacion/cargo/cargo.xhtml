@@ -1,0 +1,121 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <ui:define name="metadata">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+
+    <ui:define name="title">
+        <div class="pull-left hidden-xs">
+            <h3>#{menu['label.menu.cargo']}</h3>
+        </div>
+    </ui:define>
+
+
+    <ui:define name="body">
+        <h:form id="formDatatable">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div style="text-align: right;">
+                        <p:commandButton class="btn btn-success btn-block"
+                                         update=":formCargo, headerDialog"
+                                         oncomplete="PF('cargoDialog').show()"
+                                         icon="fa fa-plus-square-o" title="Crear un registro"/>
+                    </div>    
+                </div>
+                <div class="box-body">
+                    <p:dataTable value="#{cargoMb.listCargo}"
+                                 id="dataClasificacion"
+                                 paginator="true"
+                                 widgetVar="dataCargoWidg"
+                                 rowKey="#{cargo.idCargo}"
+                                 lazy="true"
+                                 filterDelay="800"
+                                 rows="5"
+                                 styleClass="header-right no-border"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                 rowsPerPageTemplate="5,10"
+                                 var="cargo" 
+                                 emptyMessage="No se han encontrado registros">
+                        <p:column headerText="Nombre" filterBy="#{cargo.nombre}"
+                                  sortBy="#{cargo.nombre}">
+                            <h:outputText value="#{cargo.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Fecha creación" sortBy="#{cargo.fechaCreacion}">
+                            <h:outputText value="#{cargo.fechaCreacion}">
+                                <f:convertDateTime type="localDate" pattern="#{menu['label.format.date']}"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Acciones">
+                            <p:commandButton styleClass="btn btn-warning"
+                                             update=":formCargo, headerDialog"
+                                             oncomplete="PF('cargoDialog').show()"
+                                             title="Editar registro" icon="fa fa-edit">
+                                <f:setPropertyActionListener target="#{cargoMb.cargoDto}" 
+                                                             value="#{cargo}"/>
+                            </p:commandButton>
+                            <p:commandButton styleClass="btn btn-danger" update="formDatatable" action="#{cargoMb.delete(cargo)}" 
+                                             title="Eliminar registro" icon="fa fa-trash">
+                                <p:confirm header="Confirmación" message="Estas seguro de eliminar el registro?" icon="ui-icon-alert"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </h:form>
+
+        <p:dialog widgetVar="cargoDialog"  
+                  modal="true"
+                  appendTo="@(body)"
+                  position="center"
+                  resizable="false"
+                  responsive="true"
+                  draggable="true"
+                  showEffect="fade" hideEffect="fade" styleClass="box-primary box-solid card">
+            <f:facet name="header">
+                <h:outputText id="headerDialog" value="#{cargoMb.cargoDto.idCargo ne null ? 'Editar' : 'Crear'} cargo"/>
+            </f:facet>
+            <h:form id="formCargo">
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <p:outputLabel for="@next" value="Nombre*" />
+                        <p:inputText id="inputNombre"
+                                     autocomplete="off"
+                                     requiredMessage="Nombre es obligatorio" 
+                                     required="true" value="#{cargoMb.cargoDto.nombre}"/>
+
+                    </div>
+                </div>
+                <p:spacer width="10"/>
+                <div class="col-md-12 bg-light text-right">
+                    <p:commandButton class="btn btn-secondary"
+                                     immediate="true"
+                                     action="#{cargoMb.init()}"
+                                     oncomplete="PF('cargoDialog').hide()"
+                                     icon="fas fa-arrow-alt-circle-left" 
+                                     value="Cancelar"/>
+                    <p:commandButton class="btn btn-primary" 
+                                     icon="fa fa-save"
+                                     action="#{cargoMb.save()}"
+                                     oncomplete="if(args.validationFailed) { hideBar()}" 
+                                     update="formCargo,formDatatable"
+                                     value="Guardar"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        <h:form>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-solid box-danger">
+                <p:commandButton value="Si" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
+                                 icon="far fa-check-circle"/>
+                <p:commandButton value="No" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
+                                 icon="fas fa-times-circle"/>
+            </p:confirmDialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

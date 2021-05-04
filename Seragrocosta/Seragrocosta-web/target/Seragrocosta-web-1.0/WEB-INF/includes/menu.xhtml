@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ul class="sidebar-menu tree" data-widget="tree">
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-pie-chart"></i>
+                <span>#{menu['menu.contabilidad.principal']}</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+        </li>
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-calculator"></i>
+                <span>#{menu['menu.nomina.principal']}</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+                <li>
+                    <p:link outcome="#{menu['nomina.url.concepto.nomina']}">
+                        <i class="fa fa-cash-register"></i>
+                        <span>#{menu['nomina.submenu.concepto.nomina']}</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link outcome="#{menu['parametrizacion.url.empleados']}">
+                        <i class="fa fa-users"></i>
+                        <span>#{menu['menu.empleado.principal']}</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link outcome="#{menu['nomina.url.periodos']}">
+                        <i class="fa fa-calendar"></i>
+                        <span>#{menu['nomina.submenu.periodos']}</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link outcome="#{menu['nomina.url.liquidacion']}">
+                        <i class="fa fa-file-invoice-dollar"></i>
+                        <span>#{menu['nomina.submenu.liquidacion']}</span>
+                    </p:link>
+                </li>
+                 <li>
+                    <p:link outcome="#{menu['nomina.url.parametros.nomina']}">
+                        <i class="fa fa-receipt"></i>
+                        <span>#{menu['nomina.submenu.parametros.nomina']}</span>
+                    </p:link>
+                </li>
+            </ul>
+        </li>
+
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-building"></i>
+                <span>#{menu['menu.parametrizacion.principal']}</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+                <li>
+                    <p:link outcome="#{menu['parametrizacion.url.area']}">
+                        <i class="fa fa-desktop"></i>
+                        <span>#{menu['parametrizacion.submenu.area']}</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link outcome="#{menu['parametrizacion.url.cargo']}">
+                        <i class="fa fa-suitcase"></i>
+                        <span>#{menu['parametrizacion.submenu.cargo']}</span>
+                    </p:link>
+                </li>
+
+               <li>
+                    <p:link outcome="#{menu['parametrizacion.url.arl']}">
+                        <i class="fa fa-user-injured"></i>
+                        <span>#{menu['parametrizacion.submenu.arl']}</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link outcome="#{menu['parametrizacion.url.banco']}">
+                        <i class="fa fa-bank"></i>
+                        <span>#{menu['parametrizacion.submenu.banco']}</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link outcome="#{menu['parametrizacion.url.cesantias']}">
+                        <i class="fa fa-hand-holding-usd"></i>
+                        <span>#{menu['parametrizacion.submenu.cesantias']}</span>
+                    </p:link>
+                </li>
+                
+                <li>
+                    <p:link outcome="#{menu['parametrizacion.url.caja.compensacion']}">
+                        <i class="fa fa-home"></i>
+                        <span>#{menu['parametrizacion.submenu.caja.compensacion']}</span>
+                    </p:link>
+                </li>
+                
+                <li>
+                    <p:link outcome="#{menu['parametrizacion.url.eps']}">
+                        <i class="fa fa-hospital-user"></i>
+                        <span>#{menu['parametrizacion.submenu.eps']}</span>
+                    </p:link>
+                </li>
+                <li>
+                    <p:link outcome="#{menu['parametrizacion.url.fondo.pensiones']}">
+                        <i class="fa fa-line-chart"></i>
+                        <span>#{menu['parametrizacion.submenu.fondo.pensiones']}</span>
+                    </p:link>
+                </li>
+            </ul>
+        </li>
+        
+        <li class="treeview">
+            <a href="#">
+                <i class="fa fa-gears"></i>
+                <span>#{menu['menu.configuracion.principal']}</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+            </ul>
+        </li>
+
+    </ul>
+
+
+</ui:composition>

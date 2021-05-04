@@ -1,0 +1,1249 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <ui:define name="metadata">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+
+    <ui:define name="title">
+        <div class="pull-left hidden-xs">
+            <h3>#{menu['label.menu.empleados']}</h3>
+        </div>
+    </ui:define>
+
+
+    <ui:define name="body">
+        <h:form id="formDatatable">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div style="text-align: right;">
+                        <p:commandButton class="btn btn-success btn-block"
+                                         update=":formEmpleado, headerDialog"
+                                         oncomplete="PF('empleadoDialog').show()"
+                                         icon="fa fa-plus-square-o" title="Crear un registro"/>
+                    </div>    
+                </div>
+                <div class="box-body">
+                    <p:dataTable value="#{empleadoMb.listEmpleado}"
+                                 id="dataClasificacion"
+                                 paginator="true"
+                                 widgetVar="dataEmpleadoWidg"
+                                 rowKey="#{empleado.idEmpleado}"
+                                 lazy="true"
+                                 filterDelay="800"
+                                 rows="5"
+                                 styleClass="header-right no-border"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                 rowsPerPageTemplate="5,10"
+                                 var="empleado" 
+                                 emptyMessage="No se han encontrado registros">
+                        <p:column style="width:2rem">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column headerText="Primer nombre" filterBy="#{empleado.primerNombre}"
+                                  sortBy="#{empleado.primerNombre}">
+                            <h:outputText value="#{empleado.primerNombre}"/>
+                        </p:column>
+                        <p:column headerText="Segundo nombre" filterBy="#{empleado.segundoNombre}"
+                                  sortBy="#{empleado.segundoNombre}">
+                            <h:outputText value="#{empleado.segundoNombre}"/>
+                        </p:column>
+                        <p:column headerText="Primer apellido" filterBy="#{empleado.primerApellido}"
+                                  sortBy="#{empleado.primerApellido}">
+                            <h:outputText value="#{empleado.primerApellido}"/>
+                        </p:column>
+                        <p:column headerText="Segundo apellido" filterBy="#{empleado.segundoApellido}"
+                                  sortBy="#{empleado.segundoApellido}">
+                            <h:outputText value="#{empleado.segundoApellido}"/>
+                        </p:column>
+                        <p:column headerText="Tipo" filterBy="#{empleado.tipoIdentificacion}"
+                                  sortBy="#{empleado.tipoIdentificacion}" filterMatchMode="exact">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('dataEmpleadoWidg').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="Todos" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{tiposIdentificacion}" 
+                                                   var="tipoIdent" itemLabel="#{tipoIdent.description}" 
+                                                   itemValue="#{tipoIdent}"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{empleado.tipoIdentificacion.description}"/>
+                        </p:column>
+                        <p:column headerText="Identificación" filterBy="#{empleado.identificacion}"
+                                  sortBy="#{empleado.identificacion}">
+                            <h:outputText value="#{empleado.identificacion}"/>
+                        </p:column>
+                        <p:column headerText="Email" filterBy="#{empleado.email}"
+                                  sortBy="#{empleado.email}">
+                            <h:outputText value="#{empleado.email}"/>
+                        </p:column>
+                        <p:column headerText="Acciones">
+                            <p:commandButton id="dynaButton" styleClass="btn btn-info"
+                                             global="false"
+                                             title="Novedades" icon="fa fa-file-text-o">
+                            </p:commandButton>
+                            <p:menu overlay="true" trigger="dynaButton" 
+                                    my="left top" at="left bottom">
+                                <p:menuitem value="Novedad fija" oncomplete="PF('empleadoNovedadDialog').show()" 
+                                            update=":formNovedadEmpleado">
+                                    <f:setPropertyActionListener target="#{empleadoMb.empleadoDto}" 
+                                                                 value="#{empleado}"/>
+                                </p:menuitem>
+                                <p:menuitem value="Novedad variable" oncomplete="PF('novedadVariableDialog').show()" 
+                                            update=":formNovedadVariable">
+                                    <f:setPropertyActionListener target="#{empleadoMb.empleadoDto}" 
+                                                                 value="#{empleado}"/>
+                                </p:menuitem>
+                            </p:menu>
+                            <p:commandButton styleClass="btn btn-warning"
+                                             update=":formEmpleado, headerDialog"
+                                             action="#{empleadoMb.preEdit(empleado)}"
+                                             oncomplete="PF('empleadoDialog').show()"
+                                             title="Editar registro" icon="fa fa-edit">
+                            </p:commandButton>
+                            <p:commandButton styleClass="btn btn-danger" update="formDatatable" action="#{empleadoMb.delete(empleado)}" 
+                                             title="Eliminar registro" icon="fa fa-trash">
+                                <p:confirm header="Confirmación" message="Estas seguro de eliminar el registro?" icon="ui-icon-alert"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:rowExpansion>
+                            <div class="card">
+                                <div class="ui-g-12">
+                                    <div class="ui-g-4">
+                                        <p:panel header="Datos básicos">
+                                            <p:panelGrid columns="4">
+                                                <p:outputLabel value="Célular:"/>
+                                                <h:outputText value="#{empleado.celular}"/>
+
+                                                <p:outputLabel value="Télefono:"/>
+                                                <h:outputText value="#{empleado.telefono}"/>
+
+                                                <p:outputLabel value="Departamento:"/>
+                                                <h:outputText value="#{empleado.departamentoDto.nombre}"/>
+
+                                                <p:outputLabel value="Municipio:"/>
+                                                <h:outputText value="#{empleado.municipioDto.nombre}"/>
+
+                                                <p:outputLabel value="Fecha de nacimiento:"/>
+                                                <h:outputText value="#{empleado.fechaNacimiento}">
+                                                    <f:convertDateTime type="localDate" pattern="#{menu['label.format.date']}"/>
+                                                </h:outputText>
+
+                                                <p:outputLabel value="Dirección"/>
+                                                <h:outputText value="#{empleado.direccion}"/>
+
+                                                <p:outputLabel value="Estado civil:"/>
+                                                <h:outputText value="#{empleado.nominaDto.estadoCivil.description}"/>
+
+                                                <p:outputLabel value="Fecha de ingreso:"/>
+                                                <h:outputText value="#{empleado.fechaIngreso}">
+                                                    <f:convertDateTime type="localDate" pattern="#{menu['label.format.date']}"/>
+                                                </h:outputText>
+
+                                                <p:outputLabel value="Fecha de retiro"/>
+                                                <h:outputText value="#{empleado.fechaRetiro}">
+                                                    <f:convertDateTime type="localDate" pattern="#{menu['label.format.date']}"/>
+                                                </h:outputText>
+
+                                                <p:outputLabel value="Libreta militar"/>
+                                                <h:outputText value="#{empleado.nominaDto.libretaMilitar ? 'Si' : 'No'}"/>
+
+                                                <p:outputLabel value="Cargo:"/>
+                                                <h:outputText value="#{empleado.nominaDto.idCargo.nombre}"/>
+
+                                                <p:outputLabel value="Area:"/>
+                                                <h:outputText value="#{empleado.nominaDto.idArea.nombre}"/>
+
+                                                <p:outputLabel value="Tipo de contrato:"/>
+                                                <h:outputText value="#{empleado.tipoContrato.description}"/>
+
+                                                <p:outputLabel value="Asignación básica"/>
+                                                <h:outputText value="#{empleado.nominaDto.asignacionBasica}">
+                                                    <f:convertNumber currencySymbol="$" maxFractionDigits="0" type="currency"/>
+                                                </h:outputText>
+                                            </p:panelGrid>
+                                        </p:panel>
+                                    </div>
+                                    <div class="ui-g-4">
+                                        <p:panel header="Fondos">
+                                            <p:panelGrid columns="2">
+                                                <p:outputLabel value="ARL:"/>
+                                                <h:outputText value="#{empleado.nominaDto.idArl.nombre}"/>
+
+                                                <p:outputLabel value="EPS:"/>
+                                                <h:outputText value="#{empleado.nominaDto.idEps.nombre}"/>
+
+                                                <p:outputLabel value="Fondo pensión:"/>
+                                                <h:outputText value="#{empleado.nominaDto.fondoPensionDto.nombre}"/>
+
+                                                <p:outputLabel value="Caja compensación:"/>
+                                                <h:outputText value="#{empleado.nominaDto.idCajaCompensacion.nombre}"/>
+
+                                                <p:outputLabel value="Cesantias:"/>
+                                                <h:outputText value="#{empleado.nominaDto.cesantiasDto.nombre}"/>
+                                            </p:panelGrid>
+                                        </p:panel>
+                                    </div>
+                                    <div class="ui-g-4">
+                                        <p:panel header="Datos bancarios">
+                                            <p:panelGrid columns="2">
+
+                                                <p:outputLabel value="Banco:"/>
+                                                <h:outputText value="#{empleado.nominaDto.idBanco.nombre}"/>
+
+                                                <p:outputLabel value="Cuenta:"/>
+                                                <h:outputText value="#{empleado.nominaDto.bancoCuenta}"/>
+
+                                                <p:outputLabel value="Tipo:"/>
+                                                <h:outputText value="#{empleado.nominaDto.bancoTipoCuenta.description}"/>
+                                            </p:panelGrid>
+                                        </p:panel>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:rowExpansion>
+                    </p:dataTable>
+                </div> 
+            </div>
+        </h:form>
+
+        <p:dialog widgetVar="empleadoDialog"  
+                  modal="true"
+                  appendTo="@(body)"
+                  position="center"
+                  width="1000"
+                  resizable="false"
+                  responsive="true"
+                  draggable="true"
+                  showEffect="fade" hideEffect="fade" styleClass="box-primary box-solid card">
+            <f:facet name="header">
+                <h:outputText id="headerDialog" value="#{empleadoMb.empleadoDto.idEmpleado ne null ? 'Editar' : 'Crear'} empleado"/>
+            </f:facet>
+            <h:form id="formEmpleado">
+                <p:accordionPanel>
+                    <p:tab title="Datos básicos">
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-6">
+                                    <div class="p-field">
+                                        <p:outputLabel for="selectTipoDoc" value="Tipo de identificación*" />
+                                        <p:selectOneMenu effect="fold" id="selectTipoDoc" required="true" 
+                                                         requiredMessage="Tipo de identificación es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.tipoIdentificacion}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true"
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{tiposIdentificacion}" 
+                                                           var="tipoIdentificacion" 
+                                                           itemValue="#{tipoIdentificacion}"
+                                                           itemLabel="#{tipoIdentificacion.description}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="ui-g-6">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputIdentificacion" value="Identificación*" />
+                                        <p:inputText id="inputIdentificacion"
+                                                     autocomplete="off"
+                                                     requiredMessage="Identificación es obligatorio" 
+                                                     required="true" value="#{empleadoMb.empleadoDto.identificacion}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputPrimerNombre" value="Primer nombre*"/>
+                                        <p:inputText id="inputPrimerNombre"
+                                                     autocomplete="off"
+                                                     requiredMessage="Primer nombre es obligatorio" 
+                                                     required="true" value="#{empleadoMb.empleadoDto.primerNombre}"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputSegundoNombre" value="Segundo nombre"/>
+                                        <p:inputText id="inputSegundoNombre"
+                                                     autocomplete="off"
+                                                     value="#{empleadoMb.empleadoDto.segundoNombre}"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputPrimerApellido" value="Primer apellido*" />
+                                        <p:inputText id="inputPrimerApellido"
+                                                     autocomplete="off"
+                                                     requiredMessage="Primer apellido es obligatorio" 
+                                                     required="true" value="#{empleadoMb.empleadoDto.primerApellido}"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputSegundoApellido" value="Segundo apellido" />
+                                        <p:inputText id="inputSegundoApellido"
+                                                     autocomplete="off"
+                                                     value="#{empleadoMb.empleadoDto.segundoApellido}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="selectDept" value="Departamento*" />
+                                        <p:selectOneMenu effect="fold" id="selectDept" required="true"
+                                                         filter="true"
+                                                         filterMatchMode="contains"
+                                                         requiredMessage="Departamento es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.departamentoDto.idDepartamento}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true"
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{departamentos}" 
+                                                           var="departamento" 
+                                                           itemValue="#{departamento.idDepartamento}"
+                                                           itemLabel="#{departamento.nombre}"/>
+                                            <p:ajax event="itemSelect" update="selectMunic"
+                                                    listener="#{empleadoMb.findMunicipioByDepartamento()}"
+                                                    />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="selectMunic" value="Municipio*" />
+                                        <p:selectOneMenu disabled="#{empleadoMb.empleadoDto.departamentoDto.idDepartamento eq null}"
+                                                         filter="true"
+                                                         effect="fold" 
+                                                         required="true" 
+                                                         filterMatchMode="contains"
+                                                         requiredMessage="Municipio es obligatorio"
+                                                         id="selectMunic" value="#{empleadoMb.empleadoDto.municipioDto.idMunicipio}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{empleadoMb.listMunicipioDto}" 
+                                                           var="municipio" 
+                                                           itemValue="#{municipio.idMunicipio}"
+                                                           itemLabel="#{municipio.nombre}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="selectSexo" value="Sexo*" />
+                                        <p:selectOneMenu effect="fold" required="true" 
+                                                         requiredMessage="Sexo es obligatorio"
+                                                         id="selectSexo" value="#{empleadoMb.empleadoDto.sexo}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true"
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{sexos}" 
+                                                           var="sexo" 
+                                                           itemValue="#{sexo}"
+                                                           itemLabel="#{sexo.description}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="selectFechaNacimiento" value="Fecha de nacimiento*" />
+                                        <p:calendar id="selectFechaNacimiento"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    requiredMessage="Fecha de nacimiento es obligatorio" 
+                                                    required="true" value="#{empleadoMb.empleadoDto.fechaNacimiento}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-6">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputDireccion" value="Dirección*" />
+                                        <p:inputText id="inputDireccion"
+                                                     autocomplete="off"
+                                                     requiredMessage="Dirección es obligatorio" 
+                                                     required="true" value="#{empleadoMb.empleadoDto.direccion}"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputTelefono" value="Telefono" />
+                                        <div class="ui-inputgroup">
+                                            <span class="ui-inputgroup-addon"><li class="fa fa-phone fa-sm"/></span>
+                                            <p:inputMask mask="(999) 9999"
+                                                         id="inputTelefono"
+                                                         autocomplete="off"
+                                                         value="#{empleadoMb.empleadoDto.telefono}"
+                                                         >
+                                            </p:inputMask>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputCelular" value="Celular*" />
+                                        <div class="ui-inputgroup">
+                                            <span class="ui-inputgroup-addon"><li class="fa fa-mobile fa-sm"/></span>
+                                            <p:inputMask mask="(999) 999-9999"  
+                                                         id="inputCelular"
+                                                         required="true"
+                                                         requiredMessage="Celular es obligatorio"
+                                                         autocomplete="off"
+                                                         value="#{empleadoMb.empleadoDto.celular}"
+                                                         >
+                                            </p:inputMask>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputCorreo" value="Email*" />
+                                        <p:inputText
+                                            id="inputCorreo"
+                                            autocomplete="off"
+                                            required="true"
+                                            validatorMessage="Email no valido"
+                                            requiredMessage="Email es obligatorio"
+                                            value="#{empleadoMb.empleadoDto.email}">
+                                            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]"/>
+                                        </p:inputText>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputEstadoCivil" value="Estado civil*" />
+                                        <p:selectOneMenu effect="fold" id="inputEstadoCivil" required="true" 
+                                                         requiredMessage="Estado civil es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.estadoCivil}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{estadosCivil}" 
+                                                           var="estadoCivil" 
+                                                           itemValue="#{estadoCivil}"
+                                                           itemLabel="#{estadoCivil.description}"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputFechaIngreso" value="Fecha de ingreso*" />
+                                        <p:calendar id="inputFechaIngreso"
+                                                    autocomplete="off"
+                                                    disabled="#{empleadoMb.empleadoDto.idEmpleado ne null}"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    requiredMessage="Fecha de ingreso es obligatorio" 
+                                                    required="true" value="#{empleadoMb.empleadoDto.fechaIngreso}"/>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputFechaRetiro" value="Fecha de retiro" />
+                                        <p:calendar id="inputFechaRetiro"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    value="#{empleadoMb.empleadoDto.fechaRetiro}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputAsignacionBasica" value="Asignación básica*" />
+                                        <div class="ui-inputgroup">
+                                            <span class="ui-inputgroup-addon"><li class="fa fa-dollar fa-sm"/></span>
+                                            <p:inputNumber id="inputAsignacionBasica"
+                                                           autocomplete="off"
+                                                           emptyValue="zero"
+                                                           decimalPlaces="0"
+                                                           required="true"
+                                                           requiredMessage="Asignación básica es obligatorio"
+                                                           value="#{empleadoMb.empleadoDto.nominaDto.asignacionBasica}">  
+                                            </p:inputNumber>  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputLibretaMilitar" value="Libreta militar*" />
+                                        <p:selectOneMenu effect="fold" id="inputLibretaMilitar" required="true" 
+                                                         requiredMessage="Libreta militar es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.libretaMilitar}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{conditionBooleans}" 
+                                                           var="libretaMilitar" 
+                                                           itemValue="#{libretaMilitar.condition}"
+                                                           itemLabel="#{libretaMilitar.description}"/>
+                                        </p:selectOneMenu>  
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputCargo" value="Cargo*" />
+                                        <p:selectOneMenu effect="fold" id="inputCargo" required="true" 
+                                                         requiredMessage="Cargo es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.idCargo.idCargo}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{listCargos}" 
+                                                           var="cargo" 
+                                                           itemValue="#{cargo.idCargo}"
+                                                           itemLabel="#{cargo.nombre}"/>
+                                        </p:selectOneMenu>  
+                                    </div>
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputArea" value="Area*" />
+                                        <p:selectOneMenu effect="fold" id="inputArea" required="true" 
+                                                         requiredMessage="Area es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.idArea.idArea}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{listAreas}" 
+                                                           var="area" 
+                                                           itemValue="#{area.idArea}"
+                                                           itemLabel="#{area.nombre}"/>
+                                        </p:selectOneMenu>  
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputTipoContrato" value="Tipo de contrato*" />
+                                        <p:selectOneMenu effect="fold" id="inputTipoContrato" required="true" 
+                                                         requiredMessage="Tipo de contrato es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.tipoContrato}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{tipoContratos}" 
+                                                           var="tipoContrato" 
+                                                           itemValue="#{tipoContrato}"
+                                                           itemLabel="#{tipoContrato.description}"/>
+                                        </p:selectOneMenu>  
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </p:tab>
+
+                    <p:tab title="Fondos">
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputArl" value="ARL*" />
+                                        <p:selectOneMenu effect="fold" id="inputArl" required="true" 
+                                                         requiredMessage="ARL es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.idArl.idArl}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{listArls}" 
+                                                           var="arl"
+                                                           itemValue="#{arl.idArl}"
+                                                           itemLabel="#{arl.nombre}"/>
+                                        </p:selectOneMenu>  
+                                    </div>    
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateArlInicial" value="Fecha inicial*" />
+                                        <p:calendar id="dateArlInicial"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    requiredMessage="Fecha inicial ARL es obligatorio" 
+                                                    required="true" value="#{empleadoMb.empleadoDto.nominaDto.fechaInicialArl}"/>
+                                    </div>    
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateArlFinal" value="Fecha retiro" />
+                                        <p:calendar id="dateArlFinal"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    value="#{empleadoMb.empleadoDto.nominaDto.fechaFinalArl}"/>
+                                    </div>    
+                                </div>
+                                <div class="ui-g-3">
+                                    <div class="p-field">
+                                        <p:outputLabel for="nivelArl" value="Nivel ARL" />
+                                        <p:selectOneMenu effect="fold" id="nivelArl" required="true" 
+                                                         requiredMessage="Nivel de ARL es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.nivelArl}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{nivelesArl}" 
+                                                           var="nivel"
+                                                           itemValue="#{nivel}"
+                                                           itemDescription="#{'% '.concat(nivel.porcentaje)}"
+                                                           itemLabel="#{nivel.descripcion}"/>
+                                        </p:selectOneMenu>  
+                                    </div>   
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputEps" value="EPS*" />
+                                        <p:selectOneMenu effect="fold" id="inputEps" required="true" 
+                                                         requiredMessage="EPS es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.idEps.idEps}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{listEps}" 
+                                                           var="eps"
+                                                           itemValue="#{eps.idEps}"
+                                                           itemLabel="#{eps.nombre}"/>
+                                        </p:selectOneMenu>  
+                                    </div>    
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateEpsInicial" value="Fecha inicial*" />
+                                        <p:calendar id="dateEpsInicial"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    requiredMessage="Fecha inicial Fondo pensión es obligatorio" 
+                                                    required="true" value="#{empleadoMb.empleadoDto.nominaDto.fechaInicialEps}"/>
+                                    </div>   
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateEpsFinal" value="Fecha retiro" />
+                                        <p:calendar id="dateEpsFinal"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    value="#{empleadoMb.empleadoDto.nominaDto.fechaFinalEps}"/>
+                                    </div>   
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputFondoPension" value="Fondo pensión*" />
+                                        <p:selectOneMenu effect="fold" id="inputFondoPension" required="true" 
+                                                         requiredMessage="Fondo pensión es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.fondoPensionDto.idFondoPension}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{listFondoPensiones}" 
+                                                           var="fondoPension"
+                                                           itemValue="#{fondoPension.idFondoPension}"
+                                                           itemLabel="#{fondoPension.nombre}"/>
+                                        </p:selectOneMenu>  
+                                    </div>    
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateFondoPensionInicial" value="Fecha inicial*" />
+                                        <p:calendar id="dateFondoPensionInicial"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    requiredMessage="Fecha inicial Fondo pensión es obligatorio" 
+                                                    required="true" value="#{empleadoMb.empleadoDto.nominaDto.fechaInicialFondoPension}"/>
+                                    </div>   
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateFondoPensionFinal" value="Fecha retiro" />
+                                        <p:calendar id="dateFondoPensionFinal"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    value="#{empleadoMb.empleadoDto.nominaDto.fechaFinalFondoPension}"/>
+                                    </div>   
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputCajaCompesancion" value="Caja compensación*" />
+                                        <p:selectOneMenu effect="fold" id="inputCajaCompesancion" required="true" 
+                                                         requiredMessage="Caja compensación es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.idCajaCompensacion.idCajaCompensacion}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{listCajaCompensaciones}" 
+                                                           var="cajaCompensacion"
+                                                           itemValue="#{cajaCompensacion.idCajaCompensacion}"
+                                                           itemLabel="#{cajaCompensacion.nombre}"/>
+                                        </p:selectOneMenu>  
+                                    </div>    
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateCajaCompensacionInicial" value="Fecha inicial*" />
+                                        <p:calendar id="dateCajaCompensacionInicial"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    requiredMessage="Fecha inicial Caja compensación es obligatorio" 
+                                                    required="true" value="#{empleadoMb.empleadoDto.nominaDto.fechaInicialCajaCompensacion}"/>
+                                    </div>   
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateCajaCompensacionFinal" value="Fecha retiro" />
+                                        <p:calendar id="dateCajaCompensacionFinal"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    value="#{empleadoMb.empleadoDto.nominaDto.fechaFinalCajaCompensacion}"/>
+                                    </div>   
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputCesantias" value="Cesantias*" />
+                                        <p:selectOneMenu effect="fold" id="inputCesantias" required="true" 
+                                                         requiredMessage="Cesantias es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.cesantiasDto.idCesantias}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{listCesantias}" 
+                                                           var="cesantias"
+                                                           itemValue="#{cesantias.idCesantias}"
+                                                           itemLabel="#{cesantias.nombre}"/>
+                                        </p:selectOneMenu>  
+                                    </div>    
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateCesantiasInicial" value="Fecha inicial*" />
+                                        <p:calendar id="dateCesantiasInicial"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    requiredMessage="Fecha inicial Cesantias es obligatorio" 
+                                                    required="true" value="#{empleadoMb.empleadoDto.nominaDto.fechaInicialCesantias}"/>
+                                    </div>   
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="dateCesantiasFinal" value="Fecha retiro" />
+                                        <p:calendar id="dateCesantiasFinal"
+                                                    autocomplete="off"
+                                                    mask="true"
+                                                    showOn="button"
+                                                    locale="es"
+                                                    pattern="#{menu['label.format.date']}"
+                                                    value="#{empleadoMb.empleadoDto.nominaDto.fechaFinalCesantias}"/>
+                                    </div>   
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Datos Bancarios">
+                        <div class="ui-g-12">
+                            <div class="ui-fluid">
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputBanco" value="Banco*" />
+                                        <div class="ui-inputgroup">
+                                            <span class="ui-inputgroup-addon"><li class="fa fa-bank  fa-sm"/></span>
+                                            <p:selectOneMenu effect="fold" id="inputBanco" required="true" 
+                                                             requiredMessage="Banco es obligatorio"
+                                                             value="#{empleadoMb.empleadoDto.nominaDto.idBanco.idBanco}">
+                                                <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                              itemDisabled="true"
+                                                              itemLabel="Seleccione una opción"/>
+                                                <f:selectItems value="#{listBancos}" 
+                                                               var="banco"
+                                                               itemValue="#{banco.idBanco}"
+                                                               itemLabel="#{banco.nombre}"/>
+                                            </p:selectOneMenu> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputCuenta" value="Cuenta*" />
+                                        <div class="ui-inputgroup">
+                                            <span class="ui-inputgroup-addon">#</span>
+                                            <p:inputText id="inputCuenta"
+                                                         autocomplete="off"
+                                                         requiredMessage="Cuenta bancaria es obligatorio" 
+                                                         required="true" value="#{empleadoMb.empleadoDto.nominaDto.bancoCuenta}"/>  
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-g-4">
+                                    <div class="p-field">
+                                        <p:outputLabel for="inputTipoCuenta" value="Tipo*" />
+                                        <p:selectOneMenu effect="fold" id="inputTipoCuenta" required="true" 
+                                                         requiredMessage="Tipo de cuenta es obligatorio"
+                                                         value="#{empleadoMb.empleadoDto.nominaDto.bancoTipoCuenta}">
+                                            <f:selectItem itemValue="#{null}" noSelectionOption="true" 
+                                                          itemDisabled="true"
+                                                          itemLabel="Seleccione una opción"/>
+                                            <f:selectItems value="#{tiposCuenta}" 
+                                                           var="tipoCuenta"
+                                                           itemValue="#{tipoCuenta}"
+                                                           itemLabel="#{tipoCuenta.description}"/>
+                                        </p:selectOneMenu>  
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p:tab>
+                </p:accordionPanel>
+                <p:spacer width="10"/>
+                <div class="col-md-12 bg-light text-right">
+                    <p:commandButton class="btn btn-secondary"
+                                     update="formEmpleado,formDatatable"
+                                     process="@this"
+                                     action="#{empleadoMb.init()}"
+                                     oncomplete="PF('empleadoDialog').hide()"
+                                     icon="fas fa-arrow-alt-circle-left" 
+                                     value="Cancelar"/>
+                    <p:commandButton class="btn btn-primary" 
+                                     icon="fa fa-save"
+                                     action="#{empleadoMb.save()}"
+                                     oncomplete="if(args.validationFailed) { hideBar()}" 
+                                     update="formEmpleado,formDatatable"
+                                     value="Guardar"/>
+                </div>
+            </h:form>
+
+        </p:dialog>
+        <p:dialog widgetVar="empleadoNovedadDialog"  
+                  modal="true"
+                  appendTo="@(body)"
+                  position="center"
+                  width="800"
+                  resizable="false"
+                  responsive="true"
+                  draggable="true"
+                  showEffect="fade" hideEffect="fade" styleClass="box-primary box-solid card">
+            <f:facet name="header">
+                <h:outputText value="Novedad fija"/>
+            </f:facet>
+            <h:form id="formNovedadEmpleado">
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-12">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Concepto*" />
+                                <p:selectOneMenu effect="fold" id="selectTipoDoc" required="true" 
+                                                 filter="true"
+                                                 requiredMessage="Concepto es obligatorio"
+                                                 value="#{empleadoMb.empleadoDto.novedadEmpleadoDto.idConceptoNomina.idConceptoNomina}">
+                                    <f:selectItem itemValue="#{null}" noSelectionOption="true"
+                                                  itemDisabled="true"
+                                                  itemLabel="Seleccione una opción"/>
+                                    <f:selectItems value="#{conceptosNomina}" 
+                                                   var="conceptoNomina" 
+                                                   itemDescription="#{conceptoNomina.formula}"
+                                                   itemValue="#{conceptoNomina.idConceptoNomina}"
+                                                   itemLabel="#{conceptoNomina.nombre}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-4">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Valor*" />
+                                <div class="ui-inputgroup">
+                                    <span class="ui-inputgroup-addon"><li class="fa fa-dollar fa-sm"/></span>
+                                    <p:inputNumber id="inputValorConcept"
+                                                   autocomplete="off"
+                                                   emptyValue="zero"
+                                                   decimalPlaces="0"
+                                                   required="true"
+                                                   requiredMessage="Valor es obligatorio"
+                                                   value="#{empleadoMb.empleadoDto.novedadEmpleadoDto.valor}">  
+                                    </p:inputNumber>  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ui-g-2">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Cuotas" />
+                                <p:inputText id="cantidadNumber"
+                                             autocomplete="off"
+                                             maxlength="3"
+                                             value="#{empleadoMb.empleadoDto.novedadEmpleadoDto.cuotas}">
+                                    <p:keyFilter regEx="/^\d+$/"/>  
+                                </p:inputText>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <p:dataTable value="#{empleadoMb.listNovedadEmpleado}"
+                                 id="dataNovedadEmpleado"
+                                 paginator="true"
+                                 editable="true"
+                                 widgetVar="dataNovedadEmpleado"
+                                 rowKey="#{novedadEmpleado.idNovedadFija}"
+                                 lazy="true"
+                                 filterDelay="800"
+                                 rows="3"
+                                 styleClass="header-right no-border"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                 var="novedadEmpleado" 
+                                 emptyMessage="No se han encontrado registros">
+                        <p:ajax event="rowEdit" listener="#{empleadoMb.onRowEdit}" update="dataNovedadEmpleado"/>
+                        <p:ajax event="rowEditCancel" />
+                        <p:column headerText="Concepto" 
+                                  sortBy="#{novedadEmpleado.idConceptoNomina.nombre}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{novedadEmpleado.idConceptoNomina.nombre}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu value="#{novedadEmpleado.idConceptoNomina.idConceptoNomina}"
+                                                     filter="true"
+                                                     effect="fold"
+                                                     style="width:100%">
+                                        <f:selectItems value="#{conceptosNomina}" 
+                                                       var="conceptoNomina" 
+                                                       itemDescription="#{conceptoNomina.formula}"
+                                                       itemValue="#{conceptoNomina.idConceptoNomina}"
+                                                       itemLabel="#{conceptoNomina.nombre}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Valor"
+                                  sortBy="#{novedadEmpleado.valor}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{novedadEmpleado.valor}">
+                                        <f:convertNumber currencySymbol="$" maxFractionDigits="0" type="currency"/>
+                                    </h:outputText>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber autocomplete="off"
+                                                   emptyValue="zero"
+                                                   label="Valor"
+                                                   decimalPlaces="0"
+                                                   value="#{novedadEmpleado.valor}">  
+                                    </p:inputNumber>  
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Cuotas" 
+                                  sortBy="#{novedadEmpleado.cuotas}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{novedadEmpleado.cuotas}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{novedadEmpleado.cuotas}" label="Cuotas"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Acciones" style="width:10rem">
+                            <p:rowEditor editTitle="Editar registro" 
+                                         cancelTitle="Cancelar"
+                                         saveTitle="Guardar registro" />
+                        </p:column>
+                    </p:dataTable>    
+                </div>
+                <p:spacer width="10"/>
+                <div class="col-md-12 bg-light text-right">
+                    <p:commandButton class="btn btn-secondary"
+                                     update="formNovedadEmpleado,formDatatable"
+                                     process="@this"
+                                     action="#{empleadoMb.init()}"
+                                     oncomplete="PF('empleadoNovedadDialog').hide()"
+                                     icon="fas fa-arrow-alt-circle-left" 
+                                     value="Cancelar"/>
+                    <p:commandButton class="btn btn-primary" 
+                                     icon="fa fa-save"
+                                     action="#{empleadoMb.saveNovedadEmpleado()}"
+                                     oncomplete="if(args.validationFailed) { hideBar()}" 
+                                     update="formNovedadEmpleado,formDatatable"
+                                     value="Guardar"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        <p:dialog widgetVar="novedadVariableDialog"  
+                  modal="true"
+                  appendTo="@(body)"
+                  position="center"
+                  width="800"
+                  resizable="false"
+                  responsive="true"
+                  draggable="true"
+                  showEffect="fade" hideEffect="fade" 
+                  styleClass="box-primary box-solid card">
+            <f:facet name="header">
+                <h:outputText value="Novedad variable"/>
+            </f:facet>
+            <h:form id="formNovedadVariable">
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-6">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Periodo*" />
+                                <p:selectOneMenu effect="fold" required="true" 
+                                                 filter="true"
+                                                 requiredMessage="Periodo es obligatorio"
+                                                 value="#{empleadoMb.empleadoDto.novedadVariableDto.idPeriodo.idPeriodo}">
+                                    <f:selectItem itemValue="#{null}" noSelectionOption="true"
+                                                  itemDisabled="true"
+                                                  itemLabel="Seleccione una opción"/>
+                                    <f:selectItems value="#{periodos}" 
+                                                   var="periodo" 
+                                                   itemDescription="#{periodo.nombreFechas}"
+                                                   itemValue="#{periodo.idPeriodo}"
+                                                   itemLabel="#{periodo.nombre}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="ui-g-6">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Concepto*" />
+                                <p:selectOneMenu effect="fold" required="true" 
+                                                 filter="true"
+                                                 requiredMessage="Concepto es obligatorio"
+                                                 value="#{empleadoMb.empleadoDto.novedadVariableDto.idConceptoNomina.idConceptoNomina}">
+                                    <f:selectItem itemValue="#{null}" noSelectionOption="true"
+                                                  itemDisabled="true"
+                                                  itemLabel="Seleccione una opción"/>
+                                    <f:selectItems value="#{conceptosNomina}" 
+                                                   var="conceptoNomina" 
+                                                   itemDescription="#{conceptoNomina.formula}"
+                                                   itemValue="#{conceptoNomina.idConceptoNomina}"
+                                                   itemLabel="#{conceptoNomina.nombre}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-6">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Valor*" />
+                                <div class="ui-inputgroup">
+                                    <span class="ui-inputgroup-addon"><li class="fa fa-dollar fa-sm"/></span>
+                                    <p:inputNumber id="inputValorConcept"
+                                                   autocomplete="off"
+                                                   emptyValue="zero"
+                                                   decimalPlaces="0"
+                                                   required="true"
+                                                   requiredMessage="Valor es obligatorio"
+                                                   value="#{empleadoMb.empleadoDto.novedadVariableDto.valor}">  
+                                    </p:inputNumber>  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-12">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Observación" />
+                                <p:inputTextarea rows="3"
+                                                 value="#{empleadoMb.empleadoDto.novedadVariableDto.observacion}"
+                                                 cols="10" 
+                                                 counter="display"
+                                                 maxlength="200" counterTemplate="{0} Caracteres restantes." 
+                                                 autoResize="true" />
+                                <br />
+                                <h:outputText id="display" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <p:dataTable value="#{empleadoMb.listNovedadVariable}"
+                                 id="dataNovedadVariable"
+                                 paginator="true"
+                                 widgetVar="dataNovedadVariable"
+                                 editable="true"
+                                 rowKey="#{novedadVariable.idNovedadVariable}"
+                                 lazy="true"
+                                 filterDelay="800"
+                                 rows="3"
+                                 styleClass="header-right no-border"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                 var="novedadVariable" 
+                                 emptyMessage="No se han encontrado registros">
+                        <p:ajax event="rowEdit" listener="#{empleadoMb.onRowEditVariable}" update="dataNovedadVariable"/>
+                        <p:ajax event="rowEditCancel" />
+                        <p:column headerText="Periodo" 
+                                  sortBy="#{novedadVariable.idPeriodo.nombre}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{novedadVariable.idPeriodo.nombre}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu effect="fold"
+                                                     filter="true"
+                                                     style="width:100%"
+                                                     value="#{novedadVariable.idPeriodo.idPeriodo}">
+                                        <f:selectItems value="#{periodos}" 
+                                                       var="periodo" 
+                                                       itemDescription="#{periodo.nombre}"
+                                                       itemValue="#{periodo.idPeriodo}"
+                                                       itemLabel="#{periodo.nombreFechas}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Concepto" 
+                                  sortBy="#{novedadVariable.idConceptoNomina.nombre}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{novedadVariable.idConceptoNomina.nombre}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu value="#{novedadVariable.idConceptoNomina.idConceptoNomina}"
+                                                     filter="true"
+                                                     effect="fold"
+                                                     style="width:100%">
+                                        <f:selectItems value="#{conceptosNomina}" 
+                                                       var="conceptoNomina" 
+                                                       itemDescription="#{conceptoNomina.formula}"
+                                                       itemValue="#{conceptoNomina.idConceptoNomina}"
+                                                       itemLabel="#{conceptoNomina.nombre}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Valor"
+                                  sortBy="#{novedadVariable.valor}">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{novedadVariable.valor}">
+                                        <f:convertNumber currencySymbol="$" maxFractionDigits="0" type="currency"/>
+                                    </h:outputText>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputNumber autocomplete="off"
+                                                   emptyValue="zero"
+                                                   label="Valor"
+                                                   decimalPlaces="0"
+                                                   value="#{novedadVariable.valor}">  
+                                    </p:inputNumber>  
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Observación">
+                            <p:scrollPanel style="height:40px">
+                                <p>#{novedadVariable.observacion}</p>
+                            </p:scrollPanel>
+                        </p:column>
+                        <p:column style="width:6rem">
+                            <p:rowEditor editTitle="Editar registro" 
+                                         cancelTitle="Cancelar" 
+                                         saveTitle="Guardar registro" />
+                        </p:column>
+                    </p:dataTable>    
+                </div>
+                <p:spacer width="10"/>
+                <div class="col-md-12 bg-light text-right">
+                    <p:commandButton class="btn btn-secondary"
+                                     update="formNovedadVariable,formDatatable"
+                                     process="@this"
+                                     action="#{empleadoMb.init()}"
+                                     oncomplete="PF('novedadVariableDialog').hide()"
+                                     icon="fas fa-arrow-alt-circle-left" 
+                                     value="Cancelar"/>
+                    <p:commandButton class="btn btn-primary" 
+                                     icon="fa fa-save"
+                                     action="#{empleadoMb.saveNovedadVariable()}"
+                                     oncomplete="if(args.validationFailed) { hideBar()}" 
+                                     update="formNovedadVariable,formDatatable"
+                                     value="Guardar"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        <h:form>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-solid box-danger">
+                <p:commandButton value="Si" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
+                                 icon="far fa-check-circle"/>
+                <p:commandButton value="No" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
+                                 icon="fas fa-times-circle"/>
+            </p:confirmDialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

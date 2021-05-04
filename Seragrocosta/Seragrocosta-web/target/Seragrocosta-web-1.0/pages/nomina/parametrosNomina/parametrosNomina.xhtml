@@ -1,0 +1,225 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <ui:define name="metadata">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+
+    <ui:define name="title">
+        <div class="pull-left hidden-xs">
+            <h3>#{menu['label.menu.parametros.nomina']}</h3>
+        </div>
+    </ui:define>
+
+
+    <ui:define name="body">
+        <h:form id="formParametrizacionNomina">
+            <div class="box box-primary">
+                <div class="box-body">
+                    <div class="ui-g-12">
+                        <div class="ui-fluid">
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputSalarioMinimo" value="Salario minimo*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-dollar fa-sm"/></span>
+                                        <p:inputNumber id="inputSalarioMinimo"
+                                                       autocomplete="off"
+                                                       emptyValue="zero"
+                                                       decimalPlaces="0"
+                                                       required="true"
+                                                       requiredMessage="Salario minimo es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.salarioMinimo}">  
+                                        </p:inputNumber>  
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputAuxilioTransporte" value="Auxilio de transporte*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-dollar fa-sm"/></span>
+                                        <p:inputNumber id="inputAuxilioTransporte"
+                                                       autocomplete="off"
+                                                       emptyValue="zero"
+                                                       decimalPlaces="0"
+                                                       required="true"
+                                                       requiredMessage="Auxilio de transporte es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.auxilioTransporte}">  
+                                        </p:inputNumber>  
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p:separator style="width:500px;"/>
+                    <div class="ui-g-12">
+                        <div class="ui-fluid">
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputSaludEmpresa" value="Salud empresa*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-percent fa-sm"/></span>
+                                        <p:inputNumber id="inputSaludEmpresa"
+                                                       autocomplete="off"
+                                                       required="true"
+                                                       requiredMessage="Salud empresa es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.saludEmpresa}" 
+                                                       symbol="%"
+                                                       symbolPosition="s" 
+                                                       emptyValue="zero" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputSaludEmpleado" value="Salud empleado*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-percent fa-sm"/></span>
+                                        <p:inputNumber id="inputSaludEmpleado"
+                                                       autocomplete="off"
+                                                       required="true"
+                                                       symbol="%"
+                                                       symbolPosition="s" 
+                                                       emptyValue="zero"
+                                                       requiredMessage="Salud empleado es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.saludEmpleado}"> 
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputPension" value="Pensión*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-percent fa-sm"/></span>
+                                        <p:inputNumber id="inputPension"
+                                                       autocomplete="off"
+                                                       symbol="%"
+                                                       symbolPosition="s" 
+                                                       emptyValue="zero"
+                                                       required="true"
+                                                       requiredMessage="Pensión es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.pension}"> 
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputCajaCompensacion" value="Caja de compensación*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-percent fa-sm"/></span>
+                                        <p:inputNumber id="inputCajaCompensacion"
+                                                       autocomplete="off"
+                                                       symbol="%"
+                                                       symbolPosition="s" 
+                                                       emptyValue="zero"
+                                                       required="true"
+                                                       requiredMessage="Caja de compensación es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.cajaCompensacion}"> 
+                                        </p:inputNumber>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p:separator style="width:500px;"/>
+                    <div class="ui-g-12">
+                        <div class="ui-fluid">
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputCesantias" value="Cesantias*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-percent fa-sm"/></span>
+                                        <p:inputNumber id="inputCesantias"
+                                                       autocomplete="off"
+                                                       required="true"
+                                                       requiredMessage="Cesantias es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.cesantias}" 
+                                                       symbol="%"
+                                                       symbolPosition="s" 
+                                                       emptyValue="zero" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputPrimaServicios" value="Prima de servicios*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-percent fa-sm"/></span>
+                                        <p:inputNumber id="inputPrimaServicios"
+                                                       autocomplete="off"
+                                                       required="true"
+                                                       requiredMessage="Prima de servicios es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.primaServicios}" 
+                                                       symbol="%"
+                                                       symbolPosition="s" 
+                                                       emptyValue="zero" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputVacaciones" value="Vacaciones*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-percent fa-sm"/></span>
+                                        <p:inputNumber id="inputVacaciones"
+                                                       autocomplete="off"
+                                                       required="true"
+                                                       requiredMessage="Vacaciones es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.vacaciones}" 
+                                                       symbol="%"
+                                                       symbolPosition="s" 
+                                                       emptyValue="zero" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui-g-6">
+                                <div class="p-field">
+                                    <p:outputLabel for="inputInteresCesantias" value="Interes sobre las cesantias*" />
+                                    <div class="ui-inputgroup">
+                                        <span class="ui-inputgroup-addon"><li class="fa fa-percent fa-sm"/></span>
+                                        <p:inputNumber id="inputInteresCesantias"
+                                                       autocomplete="off"
+                                                       required="true"
+                                                       requiredMessage="Interes sobre las cesantias es obligatorio"
+                                                       value="#{parametrizacionNominaMb.parametrizacionDto.interesCesantias}" 
+                                                       symbol="%"
+                                                       symbolPosition="s" 
+                                                       emptyValue="zero" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p:spacer width="10"/>
+                    <div class="col-md-12 bg-light text-right">
+                        <p:commandButton class="btn btn-secondary"
+                                         process="@this"
+                                         update="formParametrizacionNomina"
+                                         action="#{parametrizacionNominaMb.clear()}"
+                                         icon="fa fa-minus-square"
+                                         value="Limpiar"/>
+                        <p:commandButton class="btn btn-primary" 
+                                         icon="fa fa-save"
+                                         action="#{parametrizacionNominaMb.save()}"
+                                         oncomplete="if(args.validationFailed) { hideBar()}" 
+                                         update="formParametrizacionNomina"
+                                         value="Guardar"/>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

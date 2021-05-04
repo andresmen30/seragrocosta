@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <ui:define name="metadata">
+        <ui:param name="renderBreadCrumb" value="false"/>
+    </ui:define>
+
+    <ui:define name="title">
+        <div class="pull-left hidden-xs">
+            <h3>#{menu['label.menu.arl']}</h3>
+        </div>
+    </ui:define>
+
+
+    <ui:define name="body">
+        <h:form id="formDatatable">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div style="text-align: right;">
+                        <p:commandButton class="btn btn-success btn-block"
+                                         update=":formArl, headerDialog"
+                                         oncomplete="PF('arlDialog').show()"
+                                         icon="fa fa-plus-square-o" title="Crear un registro"/>
+                    </div>    
+                </div>
+                <div class="box-body">
+                    <p:dataTable value="#{arlMb.listaArl}"
+                                 id="dataClasificacion"
+                                 paginator="true"
+                                 widgetVar="dataArlWidg"
+                                 rowKey="#{arl.idArl}"
+                                 lazy="true"
+                                 filterDelay="800"
+                                 rows="5"
+                                 styleClass="header-right no-border"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                 rowsPerPageTemplate="5,10"
+                                 var="arl" 
+                                 emptyMessage="No se han encontrado registros">
+                        <p:column headerText="Nit" filterBy="#{arl.nit}"
+                                  sortBy="#{arl.nit}">
+                            <h:outputText value="#{arl.nit}"/>
+                        </p:column>
+                        <p:column headerText="Nombre" filterBy="#{arl.nombre}"
+                                  sortBy="#{arl.nombre}">
+                            <h:outputText value="#{arl.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Fecha creación" sortBy="#{arl.fechaCreacion}">
+                            <h:outputText value="#{arl.fechaCreacion}">
+                                <f:convertDateTime type="localDate" pattern="#{menu['label.format.date']}"/>
+                            </h:outputText> 
+                        </p:column>
+                        <p:column headerText="Acciones">
+                            <p:commandButton styleClass="btn btn-warning"
+                                             update=":formArl, headerDialog"
+                                             oncomplete="PF('arlDialog').show()"
+                                             title="Editar registro" icon="fa fa-edit">
+                                <f:setPropertyActionListener target="#{arlMb.arlDto}" 
+                                                             value="#{arl}"/>
+                            </p:commandButton>
+                            <p:commandButton styleClass="btn btn-danger" update="formDatatable" action="#{arlMb.delete(arl)}" 
+                                             title="Eliminar registro" icon="fa fa-trash">
+                                <p:confirm header="Confirmación" message="Estas seguro de eliminar el registro?" icon="ui-icon-alert"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </h:form>
+
+        <p:dialog widgetVar="arlDialog"  
+                  modal="true"
+                  appendTo="@(body)"
+                  position="center"
+                  resizable="false"
+                  responsive="true"
+                  draggable="true"
+                  showEffect="fade" hideEffect="fade" styleClass="box-primary box-solid card">
+            <f:facet name="header">
+                <h:outputText id="headerDialog" value="#{arlMb.arlDto.idArl ne null ? 'Editar' : 'Crear'} ARL"/>
+            </f:facet>
+            <h:form id="formArl">
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-6">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Nit*" />
+                                <p:inputText id="inputNit"
+                                             autocomplete="off"
+                                             requiredMessage="Nit es obligatorio" 
+                                             required="true" value="#{arlMb.arlDto.nit}"/>
+                            </div>
+                        </div>
+                        <div class="ui-g-6">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Nombre*" />
+                                <p:inputText id="inputNombre"
+                                             autocomplete="off"
+                                             requiredMessage="Nombre es obligatorio" 
+                                             required="true" value="#{arlMb.arlDto.nombre}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <div class="ui-fluid">
+                        <div class="ui-g-12">
+                            <div class="p-field">
+                                <p:outputLabel for="@next" value="Descripción" />
+                                <p:inputTextarea rows="3"
+                                                 value="#{arlMb.arlDto.descripcion}"
+                                                 cols="10" 
+                                                 counter="display"
+                                                 maxlength="250" counterTemplate="{0} Caracteres restantes." 
+                                                 autoResize="true" />
+                                <br />
+                                <h:outputText id="display" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p:spacer width="10"/>
+                <div class="col-md-12 bg-light text-right">
+                    <p:commandButton class="btn btn-secondary"
+                                     immediate="true"
+                                     action="#{arlMb.init()}"
+                                     oncomplete="PF('arlDialog').hide()"
+                                     icon="fas fa-arrow-alt-circle-left" 
+                                     value="Cancelar"/>
+                    <p:commandButton class="btn btn-primary" 
+                                     icon="fa fa-save"
+                                     action="#{arlMb.save()}"
+                                     oncomplete="if(args.validationFailed) { hideBar()}" 
+                                     update="formArl,formDatatable"
+                                     value="Guardar"/>
+                </div>
+            </h:form>
+        </p:dialog>
+        <h:form>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="box-solid box-danger">
+                <p:commandButton value="Si" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
+                                 icon="far fa-check-circle"/>
+                <p:commandButton value="No" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
+                                 icon="fas fa-times-circle"/>
+            </p:confirmDialog>
+        </h:form>
+    </ui:define>
+</ui:composition>
